@@ -1,3 +1,4 @@
+using System.Net.Http;
 using System.IO.Compression;
 using System.Runtime.InteropServices;
 using Aetherworks.Models;
