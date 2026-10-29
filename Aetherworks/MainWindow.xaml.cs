@@ -81,6 +81,7 @@ public partial class MainWindow : Window
 
     private async Task InstallGameAsync(LibraryGame game)
     {
+        if (string.IsNullOrWhiteSpace(_signedInEmail)) throw new InvalidOperationException("Sign in with Google before installing or managing games.");
         if (string.IsNullOrWhiteSpace(game.Manifest.DownloadUrl)) throw new InvalidOperationException("This depot has no download URL.");
         game.Status = "Downloading…";
         game.Progress = 0;
@@ -103,6 +104,7 @@ public partial class MainWindow : Window
     private void Play_Click(object sender, RoutedEventArgs e)
     {
         if (sender is not Button { Tag: LibraryGame game }) return;
+        if (string.IsNullOrWhiteSpace(_signedInEmail)) { MessageBox.Show("Sign in with Google before launching games."); return; }
         var executable = Path.Combine(_installer.RootPath, game.Manifest.InstallFolder, game.Manifest.Executable);
         if (!File.Exists(executable)) { game.Status = "Not installed"; MessageBox.Show("Install this game before launching it."); return; }
         try { Process.Start(new ProcessStartInfo(executable) { WorkingDirectory = Path.GetDirectoryName(executable), UseShellExecute = true }); }
@@ -112,6 +114,7 @@ public partial class MainWindow : Window
     private void Uninstall_Click(object sender, RoutedEventArgs e)
     {
         if (sender is not Button { Tag: LibraryGame game }) return;
+        if (string.IsNullOrWhiteSpace(_signedInEmail)) { MessageBox.Show("Sign in with Google before managing games."); return; }
         if (MessageBox.Show($"Remove {game.Name} and its installed files?", "Uninstall game", MessageBoxButton.YesNo, MessageBoxImage.Question) != MessageBoxResult.Yes) return;
         try { _installer.Uninstall(game.Manifest); game.Status = "Not installed"; game.IsInstalled = false; game.Progress = 0; DownloadsList.Items.Add($"{game.Name}: removed"); }
         catch (Exception ex) { Log("Uninstall failed: " + ex.Message); MessageBox.Show(ex.Message); }
@@ -160,6 +163,7 @@ public partial class MainWindow : Window
         try
         {
             var parsed = DepotCommand.Parse(command);
+            if (string.IsNullOrWhiteSpace(_signedInEmail)) throw new InvalidOperationException("Sign in with Google before managing depots.");
             var game = _games.FirstOrDefault(g => g.Manifest.Depot == parsed.Depot);
             if (game is null) throw new InvalidOperationException($"Depot {parsed.Depot} is not in the loaded catalogue.");
             if (parsed.Action == DepotAction.Install)
