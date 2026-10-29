@@ -1,1 +1,12 @@
-[]
+[
+  {
+    "id": "aetherworks-build-test",
+    "name": "Aetherworks Build Test",
+    "description": "Temporary test depot: installs the launcher executable from the supplied GitHub Actions build artifact.",
+    "version": "0.1.0",
+    "depot": 1,
+    "downloadUrl": "https://github.com/SolanceGMD/Aetherworks/actions/runs/40968032254/artifacts/12937699833",
+    "executable": "publish/Aetherworks.exe",
+    "installFolder": "AetherworksBuildTest"
+  }
+]
