@@ -1,63 +1,58 @@
-<Window x:Class="Aetherworks.MainWindow" xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" Title="Aetherworks" Height="760" Width="1180" MinHeight="620" MinWidth="900" Background="{StaticResource WindowBrush}" Foreground="{StaticResource TextBrush}" WindowStartupLocation="CenterScreen">
+<Window x:Class="Aetherworks.MainWindow" xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" Title="Aetherworks" Height="820" Width="1360" MinHeight="700" MinWidth="1050" Background="#0B0E14" Foreground="#F3F5FA" WindowStartupLocation="CenterScreen">
+  <Window.Resources>
+    <Style TargetType="Button"><Setter Property="Foreground" Value="#E9ECF5"/><Setter Property="Background" Value="#222A39"/><Setter Property="BorderThickness" Value="0"/><Setter Property="Padding" Value="15,10"/><Setter Property="Margin" Value="0,3"/><Setter Property="FontWeight" Value="SemiBold"/><Setter Property="Cursor" Value="Hand"/><Setter Property="Template"><Setter.Value><ControlTemplate TargetType="Button"><Border Background="{TemplateBinding Background}" CornerRadius="7" Padding="{TemplateBinding Padding}"><ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/></Border></ControlTemplate></Setter.Value></Setter></Style>
+    <Style TargetType="TextBox"><Setter Property="Foreground" Value="#F3F5FA"/><Setter Property="Background" Value="#1B2230"/><Setter Property="BorderBrush" Value="#343E52"/><Setter Property="BorderThickness" Value="1"/><Setter Property="Padding" Value="11,9"/></Style>
+    <Style TargetType="PasswordBox"><Setter Property="Foreground" Value="#F3F5FA"/><Setter Property="Background" Value="#1B2230"/><Setter Property="BorderBrush" Value="#343E52"/><Setter Property="BorderThickness" Value="1"/><Setter Property="Padding" Value="11,9"/></Style>
+  </Window.Resources>
   <Grid>
     <Grid.ColumnDefinitions><ColumnDefinition Width="220"/><ColumnDefinition Width="*"/></Grid.ColumnDefinitions>
-    <Border Grid.Column="0" Background="#151A25" Padding="20">
+    <Border Background="#111722" Padding="18">
       <DockPanel>
         <StackPanel DockPanel.Dock="Top">
-          <TextBlock Text="AETHERWORKS" FontSize="21" FontWeight="Bold" Foreground="White" Margin="0,8,0,34"/>
-          <Button Content="Home" Tag="Home" Click="Navigate_Click" Margin="0,3" HorizontalContentAlignment="Left"/>
-          <Button Content="All Games" Tag="All Games" Click="Navigate_Click" Margin="0,3" HorizontalContentAlignment="Left"/>
-          <Button Content="Library" Tag="Library" Click="Navigate_Click" Margin="0,3" HorizontalContentAlignment="Left"/>
-          <Button Content="Downloads" Tag="Downloads" Click="Navigate_Click" Margin="0,3" HorizontalContentAlignment="Left"/>
-          <Button Content="Settings" Tag="Settings" Click="Navigate_Click" Margin="0,3" HorizontalContentAlignment="Left"/>
+          <TextBlock Text="AETHERWORKS" FontSize="20" FontWeight="ExtraBold" Foreground="White" Margin="4,10,0,28"/>
+          <Button Content="⌂   Home" Tag="Home" Click="Navigate_Click" HorizontalContentAlignment="Left"/>
+          <Button Content="▦   Store" Tag="Store" Click="Navigate_Click" HorizontalContentAlignment="Left"/>
+          <Button Content="▣   Library" Tag="Library" Click="Navigate_Click" HorizontalContentAlignment="Left"/>
+          <Button Content="⇩   Downloads" Tag="Downloads" Click="Navigate_Click" HorizontalContentAlignment="Left"/>
+          <Button Content="&gt;_   Console" Tag="Console" Click="Navigate_Click" HorizontalContentAlignment="Left"/>
+          <Button Content="⚙   Settings" Tag="Settings" Click="Navigate_Click" HorizontalContentAlignment="Left"/>
         </StackPanel>
-        <TextBlock DockPanel.Dock="Bottom" Text="Aetherworks • 0.1.0" Foreground="{StaticResource MutedBrush}" FontSize="11" Margin="0,18"/>
+        <StackPanel DockPanel.Dock="Bottom">
+          <Separator Background="#30394A" Margin="0,12"/>
+          <TextBlock Text="Aetherworks  •  0.2.0" Foreground="#8E9AAF" FontSize="11"/>
+          <TextBlock x:Name="AccountLabel" Text="Not signed in" Foreground="#8E9AAF" FontSize="11" Margin="0,6,0,0"/>
+        </StackPanel>
       </DockPanel>
     </Border>
-    <Grid Grid.Column="1" Margin="34">
-      <Grid.RowDefinitions><RowDefinition Height="Auto"/><RowDefinition Height="Auto"/><RowDefinition Height="*"/><RowDefinition Height="Auto"/></Grid.RowDefinitions>
-      <DockPanel Grid.Row="0" Margin="0,0,0,24">
-        <TextBlock x:Name="PageTitle" Text="Discover games" FontSize="28" FontWeight="Bold" VerticalAlignment="Center"/>
-        <Button Content="↻ Refresh catalogue" DockPanel.Dock="Right" Click="Refresh_Click" Background="{StaticResource AccentBrush}"/>
+    <Grid Grid.Column="1" Margin="30,24,30,20">
+      <Grid.RowDefinitions><RowDefinition Height="Auto"/><RowDefinition Height="*"/><RowDefinition Height="Auto"/></Grid.RowDefinitions>
+      <DockPanel Grid.Row="0" Margin="0,0,0,22">
+        <StackPanel><TextBlock x:Name="PageTitle" Text="Welcome back" FontSize="28" FontWeight="Bold"/><TextBlock x:Name="PageSubtitle" Text="Your games. Your library. All in one place." Foreground="#929DB1" Margin="0,5,0,0"/></StackPanel>
+        <Button x:Name="SignInButton" Content="Sign in with Google" Click="SignIn_Click" DockPanel.Dock="Right" Background="#E9ECF5" Foreground="#151A25" VerticalAlignment="Center"/>
       </DockPanel>
-      <Border Grid.Row="1" Background="{StaticResource PanelBrush}" CornerRadius="12" Padding="20" Margin="0,0,0,22">
-        <StackPanel>
-          <TextBlock Text="Your games, in one place." FontSize="21" FontWeight="SemiBold"/>
-          <TextBlock Text="Browse your catalogue, install complete game depots, and launch directly from your library." Foreground="{StaticResource MutedBrush}" Margin="0,7,0,0" TextWrapping="Wrap"/>
-        </StackPanel>
-      </Border>
-      <Grid Grid.Row="2">
-        <Grid.RowDefinitions><RowDefinition Height="Auto"/><RowDefinition Height="*"/></Grid.RowDefinitions>
-        <DockPanel Margin="0,0,0,12">
-          <TextBlock Text="Catalogue" FontSize="18" FontWeight="SemiBold" VerticalAlignment="Center"/>
-          <TextBox x:Name="SearchBox" Width="240" Margin="10,0,0,0" HorizontalAlignment="Right" TextChanged="Search_TextChanged"/>
-        </DockPanel>
-        <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto">
-          <ItemsControl x:Name="GamesList">
-            <ItemsControl.ItemTemplate>
-              <DataTemplate>
-                <Border Background="{StaticResource PanelBrush}" CornerRadius="10" Padding="18" Margin="0,0,0,12">
-                  <Grid>
-                    <Grid.ColumnDefinitions><ColumnDefinition Width="*"/><ColumnDefinition Width="Auto"/></Grid.ColumnDefinitions>
-                    <StackPanel>
-                      <TextBlock Text="{Binding Name}" FontSize="17" FontWeight="SemiBold"/>
-                      <TextBlock Text="{Binding Description}" Foreground="{StaticResource MutedBrush}" Margin="0,5,0,8" TextWrapping="Wrap"/>
-                      <TextBlock Text="{Binding Status}" Foreground="{StaticResource MutedBrush}" FontSize="12"/>
-                      <ProgressBar Height="5" Width="260" HorizontalAlignment="Left" Value="{Binding Progress}" Maximum="100" Margin="0,8,0,0"/>
-                    </StackPanel>
-                    <StackPanel Grid.Column="1" VerticalAlignment="Center" Orientation="Horizontal">
-                      <Button Content="Install" Tag="{Binding}" Click="Install_Click" Background="{StaticResource AccentBrush}" Margin="4"/>
-                      <Button Content="Play" Tag="{Binding}" Click="Play_Click" Margin="4"/>
-                      <Button Content="Uninstall" Tag="{Binding}" Click="Uninstall_Click" Margin="4"/>
-                    </StackPanel>
-                  </Grid>
-                </Border>
-              </DataTemplate>
-            </ItemsControl.ItemTemplate>
-          </ItemsControl>
+      <Grid Grid.Row="1">
+        <ScrollViewer x:Name="StorePage" VerticalScrollBarVisibility="Auto">
+          <StackPanel>
+            <Border Background="#202A3C" CornerRadius="14" Padding="24" Margin="0,0,0,22">
+              <StackPanel><TextBlock Text="DISCOVER" Foreground="#A99AFF" FontWeight="Bold" FontSize="11"/><TextBlock Text="Find your next favourite." FontSize="25" FontWeight="Bold" Margin="0,8,0,5"/><TextBlock Text="Install games from trusted Aetherworks depots and manage them in one library." Foreground="#AAB4C6" FontSize="13"/></StackPanel>
+            </Border>
+            <DockPanel Margin="0,0,0,14"><TextBlock Text="Game catalogue" FontSize="19" FontWeight="SemiBold" VerticalAlignment="Center"/><TextBox x:Name="SearchBox" Width="260" HorizontalAlignment="Right" TextChanged="Search_TextChanged"/></DockPanel>
+            <ItemsControl x:Name="GamesList"><ItemsControl.ItemTemplate><DataTemplate>
+              <Border Background="#151C28" BorderBrush="#273247" BorderThickness="1" CornerRadius="10" Padding="17" Margin="0,0,0,11">
+                <Grid><Grid.ColumnDefinitions><ColumnDefinition Width="*"/><ColumnDefinition Width="Auto"/></Grid.ColumnDefinitions>
+                  <StackPanel><TextBlock Text="{Binding Name}" FontSize="17" FontWeight="SemiBold"/><TextBlock Text="{Binding Description}" Foreground="#9CA8BC" Margin="0,5,0,7" TextWrapping="Wrap"/><TextBlock Text="{Binding Status}" Foreground="#A99AFF" FontSize="12"/><ProgressBar Height="5" Width="280" HorizontalAlignment="Left" Value="{Binding Progress}" Maximum="100" Margin="0,8,0,0"/></StackPanel>
+                  <StackPanel Grid.Column="1" VerticalAlignment="Center" Orientation="Horizontal"><Button Content="Install" Tag="{Binding}" Click="Install_Click" Background="#7965E8" Margin="4"/><Button Content="Play" Tag="{Binding}" Click="Play_Click" Margin="4"/><Button Content="Uninstall" Tag="{Binding}" Click="Uninstall_Click" Margin="4"/></StackPanel>
+                </Grid>
+              </Border>
+            </DataTemplate></ItemsControl.ItemTemplate></ItemsControl>
+          </StackPanel>
         </ScrollViewer>
+        <Grid x:Name="DownloadsPage" Visibility="Collapsed"><StackPanel><TextBlock Text="Downloads" FontSize="22" FontWeight="Bold" Margin="0,0,0,14"/><TextBlock Text="Active installs and recent operations appear in the console log below." Foreground="#9CA8BC"/><ListBox x:Name="DownloadsList" Background="#151C28" Foreground="#F3F5FA" BorderThickness="0" Margin="0,14,0,0" MinHeight="150"/></StackPanel></Grid>
+        <Grid x:Name="ConsolePage" Visibility="Collapsed"><Grid.RowDefinitions><RowDefinition Height="*"/><RowDefinition Height="Auto"/><RowDefinition Height="Auto"/></Grid.RowDefinitions><Border Background="#080B10" BorderBrush="#293347" BorderThickness="1" CornerRadius="10" Padding="16"><ScrollViewer VerticalScrollBarVisibility="Auto"><TextBox x:Name="ConsoleOutput" IsReadOnly="True" TextWrapping="Wrap" AcceptsReturn="True" Background="#080B10" BorderThickness="0" FontFamily="Consolas" FontSize="13" Foreground="#B6C7D9" VerticalScrollBarVisibility="Auto"/></ScrollViewer></Border><TextBox x:Name="ConsoleInput" Grid.Row="1" Margin="0,12,0,0" FontFamily="Consolas" KeyDown="ConsoleInput_KeyDown" ToolTip="sudo fetch depot 1 = [install]"/><TextBlock Grid.Row="2" Text="Syntax: sudo fetch depot 1 = [install]   |   sudo fetch depot 1 = [delete]" Foreground="#8996AB" FontSize="11" Margin="2,8,0,0"/></Grid>
+        <ScrollViewer x:Name="SettingsPage" Visibility="Collapsed"><StackPanel MaxWidth="760" HorizontalAlignment="Left"><TextBlock Text="Settings" FontSize="22" FontWeight="Bold" Margin="0,0,0,18"/><TextBlock Text="Catalogue source (HTTPS URL or local JSON path)" Foreground="#AAB4C6"/><TextBox x:Name="CatalogueSourceBox" Margin="0,7,0,14"/><TextBlock Text="Google OAuth Desktop Client ID" Foreground="#AAB4C6"/><TextBox x:Name="GoogleClientIdBox" Margin="0,7,0,6"/><TextBlock Text="Create an OAuth client of type Desktop app in Google Cloud Console, enable the Google OpenID Connect consent screen, and paste its client ID here. The app never asks for your Google password." TextWrapping="Wrap" Foreground="#8996AB" FontSize="12" Margin="0,0,0,14"/><Button Content="Save settings" Click="SaveSettings_Click" HorizontalAlignment="Left" Background="#7965E8"/><TextBlock Text="Game install directory: C:\AetherworksApps (kept separate from the launcher)" Foreground="#8996AB" Margin="0,20,0,0"/></StackPanel></ScrollViewer>
+        <Grid x:Name="HomePage" Visibility="Collapsed"><StackPanel><TextBlock Text="Aetherworks" FontSize="34" FontWeight="Bold"/><TextBlock Text="A better home for your PC games." FontSize="17" Foreground="#AAB4C6" Margin="0,6,0,20"/><Border Background="#151C28" CornerRadius="12" Padding="22"><StackPanel><TextBlock Text="Quick start" FontSize="18" FontWeight="SemiBold"/><TextBlock Text="Browse the Store to find games, open your Library to launch installed games, or use the Console to manage depots." Foreground="#AAB4C6" TextWrapping="Wrap" Margin="0,8,0,12"/><Button Content="Browse Store" Tag="Store" Click="Navigate_Click" HorizontalAlignment="Left" Background="#7965E8"/></StackPanel></Border></StackPanel></Grid>
       </Grid>
-      <TextBlock x:Name="FooterStatus" Grid.Row="3" Text="Ready" Foreground="{StaticResource MutedBrush}" Margin="0,16,0,0"/>
+      <TextBlock x:Name="FooterStatus" Grid.Row="2" Text="Ready" Foreground="#8996AB" Margin="0,15,0,0"/>
     </Grid>
   </Grid>
 </Window>
