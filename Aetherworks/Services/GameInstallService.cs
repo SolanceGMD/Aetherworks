@@ -6,7 +6,7 @@ namespace Aetherworks.Services;
 
 public sealed class GameInstallService
 {
-    public string RootPath { get; } = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData), "Aetherworks", "Games");
+    public string RootPath { get; } = @"C:\AetherworksApps";
     private readonly HttpClient _http = new() { Timeout = Timeout.InfiniteTimeSpan };
 
     public async Task InstallAsync(GameManifest game, IProgress<double>? progress, CancellationToken token)
