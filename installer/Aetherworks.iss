@@ -1,5 +1,5 @@
 #define MyAppName "Aetherworks"
-#define MyAppVersion "0.1.0"
+#define MyAppVersion "0.2.0"
 #define MyAppPublisher "Atherworks"
 #define MyAppExeName "Aetherworks.exe"
 
