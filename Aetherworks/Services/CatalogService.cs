@@ -20,10 +20,13 @@ public sealed class CatalogService
 
         var games = JsonSerializer.Deserialize<List<GameManifest>>(json, JsonOptions) ?? [];
         var ids = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+        var depots = new HashSet<int>();
         foreach (var game in games)
         {
             if (string.IsNullOrWhiteSpace(game.Id) || !ids.Add(game.Id))
                 throw new InvalidDataException("Catalogue contains a missing or duplicate game id.");
+            if (game.Depot <= 0 || !depots.Add(game.Depot))
+                throw new InvalidDataException($"Game '{game.Id}' has a missing or duplicate depot number.");
             if (string.IsNullOrWhiteSpace(game.Name) || string.IsNullOrWhiteSpace(game.Executable) ||
                 string.IsNullOrWhiteSpace(game.InstallFolder) || !Uri.TryCreate(game.DownloadUrl, UriKind.Absolute, out var download) ||
                 download.Scheme != Uri.UriSchemeHttps)
