@@ -12,6 +12,8 @@ public sealed class LibraryGame : INotifyPropertyChanged
     public string Name => Manifest.Name;
     public string Description => Manifest.Description;
     public string Version => Manifest.Version;
+    public bool SourceOnly => Manifest.SourceOnly;
+    public string ReleaseLabel => SourceOnly ? "IN DEVELOPMENT  •  SOURCE CODE ONLY" : Version;
     public string Status { get => _status; set { _status = value; OnPropertyChanged(); } }
     public double Progress { get => _progress; set { _progress = value; OnPropertyChanged(); } }
     public bool IsInstalled { get; set; }
