@@ -4,35 +4,51 @@ A Windows game launcher and catalogue built with C# and WPF on .NET 10.
 
 ## Features
 - Store, installed-game library, downloads activity, command console and settings pages.
-- Google OpenID Connect sign-in using an OAuth 2.0 Desktop client and PKCE. Google passwords are entered only on Google's website.
-- Depot commands: `sudo fetch depot 1 = [install]` and `sudo fetch depot 1 = [delete]`.
-- HTTPS ZIP downloads, staged extraction, archive path validation, executable validation and desktop shortcuts.
-- Launcher installs to `C:\Program Files (x86)\Aetherworks`; games install separately to `C:\AetherworksApps\<GameName>`.
+- No account or sign-in required.
+- Depot commands: `sudo fetch depot 2 = [install]` and `sudo fetch depot 2 = [delete]`.
+- HTTPS ZIP downloads, staged extraction and archive path validation.
+- Source-only projects can be downloaded into the Library without requiring a game executable.
+- Launcher installs to `C:\Program Files (x86)\Aetherworks`; games and source projects install separately to `C:\AetherworksApps\<GameName>`.
 
-## Google sign-in setup
-Create an OAuth Client ID of type **Desktop app** in Google Cloud Console, configure the OAuth consent screen, and paste the client ID into Settings. The launcher uses authorization code + PKCE and validates OAuth state and the verified email. Game installs, launches and depot management require a successful Google sign-in. Sign-in is session-only; persistent account sessions, cloud saves and cross-device accounts are not yet implemented.
+## Featured depot
+**Wobble Works** is listed as in development. A playable build is not available yet; depot 2 downloads its source archive:
 
-## Catalogue / depots
-Configure a local JSON file path or HTTPS URL in Settings. Example:
+`https://github.com/SolanceGMD/Aetherworks-Depots/releases/download/depot2/Wobble.Works.zip`
 
-```json
-[
-  {
-    "id": "sample-game",
-    "name": "Sample Game",
-    "description": "Example depot",
-    "version": "1.0.0",
-    "depot": 1,
-    "downloadUrl": "https://github.com/OWNER/REPOSITORY/releases/download/v1.0/Game.zip",
-    "executable": "Game.exe",
-    "installFolder": "SampleGame"
-  }
-]
+Use the Store's **Download Source** button or enter:
+
+```text
+sudo fetch depot 2 = [install]
 ```
 
-Depot numbers must be unique positive integers. The console maps the number to a catalogue entry. The supported syntax is `sudo fetch depot 1 = [install]` and `sudo fetch depot 1 = [delete]`; deletion requires confirmation.
+To remove its downloaded source files:
 
-A GitHub Actions artifact page URL (such as an `actions/runs/.../artifacts/...` link) is not a stable direct depot URL and expires according to the workflow's artifact retention policy. The build artifact contains the launcher and installer, not a game depot. For the test, use a direct ZIP URL and configure its executable path to match the ZIP contents. For real game depots, publish a ZIP as a GitHub Release asset or host it at a stable HTTPS URL.
+```text
+sudo fetch depot 2 = [delete]
+```
+
+The downloaded source is placed under `C:\AetherworksApps\WobbleWorks-Source`. It is source code, not a playable game build.
+
+## Catalogue / depots
+Configure a local JSON file path or HTTPS URL in Settings. Each catalogue item has a unique positive depot number. Normal playable games provide an executable path; source-only items set `"sourceOnly": true` and do not require an executable.
+
+Example source-only entry:
+
+```json
+{
+  "id": "example-source",
+  "name": "Example Project",
+  "description": "Source download only",
+  "version": "In Development",
+  "depot": 3,
+  "downloadUrl": "https://github.com/OWNER/REPOSITORY/releases/download/v1/Source.zip",
+  "executable": "",
+  "installFolder": "Example-Source",
+  "sourceOnly": true
+}
+```
+
+Depot deletion requires confirmation. The launcher uninstaller intentionally leaves downloaded games and source projects untouched.
 
 ## Build
 Requires the .NET 10 SDK and Windows Desktop targeting pack.
@@ -42,8 +58,6 @@ dotnet restore Aetherworks/Aetherworks.csproj
 dotnet build Aetherworks/Aetherworks.csproj -c Release
 dotnet publish Aetherworks/Aetherworks.csproj -c Release -r win-x64 --self-contained true -p:PublishSingleFile=true --output publish
 ```
-
-The Inno Setup installer packages the launcher. Uninstalling the launcher intentionally leaves installed games untouched.
 
 ## Publisher / signing
 The installer displays **Atherworks** as publisher metadata. This is not an Authenticode signature; a trusted Windows signature requires a valid code-signing certificate.
