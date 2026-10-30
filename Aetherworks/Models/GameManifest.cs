@@ -11,4 +11,5 @@ public sealed class GameManifest
     public string Executable { get; set; } = "";
     public string InstallFolder { get; set; } = "";
     public string? ArtworkUrl { get; set; }
+    public bool SourceOnly { get; set; }
 }
