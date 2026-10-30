@@ -54,7 +54,7 @@ public sealed class GameInstallService
                 }
             }
 
-            if (!File.Exists(Path.Combine(staging, game.Executable)))
+            if (!game.SourceOnly && !File.Exists(Path.Combine(staging, game.Executable)))
                 throw new InvalidDataException($"The archive did not contain the expected executable: {game.Executable}");
 
             var backup = destination + ".old";
@@ -63,7 +63,7 @@ public sealed class GameInstallService
             try { Directory.Move(staging, destination); }
             catch { if (Directory.Exists(backup) && !Directory.Exists(destination)) Directory.Move(backup, destination); throw; }
             if (Directory.Exists(backup)) Directory.Delete(backup, true);
-            CreateShortcut(game, Path.Combine(destination, game.Executable));
+            if (!game.SourceOnly) CreateShortcut(game, Path.Combine(destination, game.Executable));
             progress?.Report(100);
         }
         finally
@@ -81,7 +81,9 @@ public sealed class GameInstallService
         if (File.Exists(shortcut)) File.Delete(shortcut);
     }
 
-    public bool IsInstalled(GameManifest game) => File.Exists(Path.Combine(SafeDestination(game), game.Executable));
+    public bool IsInstalled(GameManifest game) => game.SourceOnly
+        ? Directory.Exists(SafeDestination(game)) && Directory.EnumerateFileSystemEntries(SafeDestination(game)).Any()
+        : File.Exists(Path.Combine(SafeDestination(game), game.Executable));
 
     private string SafeDestination(GameManifest game)
     {
