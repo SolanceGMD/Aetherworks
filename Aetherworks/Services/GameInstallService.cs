@@ -2,6 +2,7 @@ using System.IO;
 using System.Net.Http;
 using System.IO.Compression;
 using System.Runtime.InteropServices;
+using System.Text.Json;
 using Aetherworks.Models;
 
 namespace Aetherworks.Services;
@@ -9,14 +10,29 @@ namespace Aetherworks.Services;
 public sealed class GameInstallService
 {
     public string RootPath { get; } = @"C:\AetherworksApps";
+    public string SteamAppsPath => Path.Combine(RootPath, "steamapps");
+    public string CommonPath => Path.Combine(SteamAppsPath, "common");
+    public string DownloadingPath => Path.Combine(SteamAppsPath, "downloading");
+    public string ManifestsPath => Path.Combine(SteamAppsPath, "appmanifest");
+    public string UserDataPath => Path.Combine(RootPath, "userdata");
     private readonly HttpClient _http = new() { Timeout = Timeout.InfiniteTimeSpan };
+    private static readonly JsonSerializerOptions JsonOptions = new() { WriteIndented = true };
+
+    public string GetGamePath(GameManifest game)
+    {
+        EnsureLegacyMigration(game);
+        return SafeDestination(game);
+    }
 
     public async Task InstallAsync(GameManifest game, IProgress<double>? progress, CancellationToken token)
     {
         var destination = SafeDestination(game);
-        Directory.CreateDirectory(RootPath);
-        var staging = Path.Combine(RootPath, ".staging-" + Guid.NewGuid().ToString("N"));
-        var archive = Path.Combine(Path.GetTempPath(), "aetherworks-" + Guid.NewGuid().ToString("N") + ".zip");
+        Directory.CreateDirectory(CommonPath);
+        Directory.CreateDirectory(DownloadingPath);
+        Directory.CreateDirectory(ManifestsPath);
+        Directory.CreateDirectory(UserDataPath);
+        var staging = Path.Combine(DownloadingPath, ".staging-" + Guid.NewGuid().ToString("N"));
+        var archive = Path.Combine(DownloadingPath, game.Depot + "-" + Guid.NewGuid().ToString("N") + ".zip");
         try
         {
             await using (var output = new FileStream(archive, FileMode.CreateNew, FileAccess.Write, FileShare.None, 81920, true))
@@ -64,6 +80,7 @@ public sealed class GameInstallService
             catch { if (Directory.Exists(backup) && !Directory.Exists(destination)) Directory.Move(backup, destination); throw; }
             if (Directory.Exists(backup)) Directory.Delete(backup, true);
             if (!game.SourceOnly) CreateShortcut(game, Path.Combine(destination, game.Executable));
+            WriteManifest(game);
             progress?.Report(100);
         }
         finally
@@ -75,22 +92,60 @@ public sealed class GameInstallService
 
     public void Uninstall(GameManifest game)
     {
-        var path = SafeDestination(game);
+        var path = GetGamePath(game);
         if (Directory.Exists(path)) Directory.Delete(path, true);
+        var manifest = ManifestPath(game);
+        if (File.Exists(manifest)) File.Delete(manifest);
         var shortcut = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.DesktopDirectory), game.Name + ".lnk");
         if (File.Exists(shortcut)) File.Delete(shortcut);
     }
 
-    public bool IsInstalled(GameManifest game) => game.SourceOnly
-        ? Directory.Exists(SafeDestination(game)) && Directory.EnumerateFileSystemEntries(SafeDestination(game)).Any()
-        : File.Exists(Path.Combine(SafeDestination(game), game.Executable));
+    public bool IsInstalled(GameManifest game)
+    {
+        var path = GetGamePath(game);
+        var present = game.SourceOnly
+            ? Directory.Exists(path) && Directory.EnumerateFileSystemEntries(path).Any()
+            : File.Exists(Path.Combine(path, game.Executable));
+        if (present) WriteManifest(game);
+        return present;
+    }
+
+    private string ManifestPath(GameManifest game) => Path.Combine(ManifestsPath, game.Depot + ".json");
+
+    private void WriteManifest(GameManifest game)
+    {
+        Directory.CreateDirectory(ManifestsPath);
+        var metadata = new
+        {
+            appId = game.Depot,
+            gameId = game.Id,
+            name = game.Name,
+            version = game.Version,
+            installDirectory = game.InstallFolder,
+            sourceOnly = game.SourceOnly,
+            installedAt = DateTimeOffset.UtcNow
+        };
+        File.WriteAllText(ManifestPath(game), JsonSerializer.Serialize(metadata, JsonOptions));
+    }
+
+    private void EnsureLegacyMigration(GameManifest game)
+    {
+        var current = Path.Combine(CommonPath, game.InstallFolder);
+        var legacy = Path.Combine(RootPath, game.InstallFolder);
+        if (!Directory.Exists(current) && Directory.Exists(legacy))
+        {
+            Directory.CreateDirectory(CommonPath);
+            Directory.Move(legacy, current);
+            WriteManifest(game);
+        }
+    }
 
     private string SafeDestination(GameManifest game)
     {
         if (string.IsNullOrWhiteSpace(game.InstallFolder) || game.InstallFolder.IndexOfAny(Path.GetInvalidFileNameChars()) >= 0 || game.InstallFolder.Contains(".."))
             throw new InvalidDataException("Invalid game install folder.");
-        var root = Path.GetFullPath(RootPath) + Path.DirectorySeparatorChar;
-        var path = Path.GetFullPath(Path.Combine(RootPath, game.InstallFolder));
+        var root = Path.GetFullPath(CommonPath) + Path.DirectorySeparatorChar;
+        var path = Path.GetFullPath(Path.Combine(CommonPath, game.InstallFolder));
         if (!path.StartsWith(root, StringComparison.OrdinalIgnoreCase)) throw new InvalidDataException("Invalid install path.");
         return path;
     }
