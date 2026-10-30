@@ -3,15 +3,16 @@
 A Windows game launcher and catalogue built with C# and WPF on .NET 10.
 
 ## Features
-- Store, installed-game library, downloads activity, command console and settings pages.
+- Store, per-game detail pages, installed-game Library, downloads activity, command console and settings.
 - No account or sign-in required.
-- Depot commands: `sudo fetch depot 2 = [install]` and `sudo fetch depot 2 = [delete]`.
-- HTTPS ZIP downloads, staged extraction and archive path validation.
-- Source-only projects can be downloaded into the Library without requiring a game executable.
-- Launcher installs to `C:\Program Files (x86)\Aetherworks`; games and source projects install separately to `C:\AetherworksApps\<GameName>`.
+- Steam-style library layout under `C:\AetherworksApps\steamapps`.
+- ZIP downloads are staged in `steamapps\downloading`, then extracted into `steamapps\common\<GameName>`.
+- Per-depot JSON manifests are stored separately in `steamapps\appmanifest`; user data has its own `userdata` directory.
+- Safe ZIP extraction, install validation, progress reporting and game removal.
+- Source-only projects can be downloaded without requiring a game executable. If the installed source contains a Godot `project.godot`, Play launches it using a detected Godot executable or lets the user locate Godot.
 
 ## Featured depot
-**Wobble Works** is listed as in development. A playable build is not available yet; depot 2 downloads its source archive:
+**Wobble Works** is listed as in development. Depot 2 currently downloads its source/data archive:
 
 `https://github.com/SolanceGMD/Aetherworks-Depots/releases/download/depot2/Wobble.Works.zip`
 
@@ -27,7 +28,7 @@ To remove its downloaded source files:
 sudo fetch depot 2 = [delete]
 ```
 
-The downloaded source is placed under `C:\AetherworksApps\WobbleWorks-Source`. It is source code, not a playable game build.
+The source is installed to `C:\AetherworksApps\steamapps\common\Wobble Works`. The current depot does not include a Godot `project.godot` file, so it is not launchable yet; Play will report this until the depot contains a complete Godot project.
 
 ## Catalogue / depots
 Configure a local JSON file path or HTTPS URL in Settings. Each catalogue item has a unique positive depot number. Normal playable games provide an executable path; source-only items set `"sourceOnly": true` and do not require an executable.
@@ -48,7 +49,7 @@ Example source-only entry:
 }
 ```
 
-Depot deletion requires confirmation. The launcher uninstaller intentionally leaves downloaded games and source projects untouched.
+Depot deletion requires confirmation. Uninstalling Aetherworks intentionally leaves downloaded games and source projects untouched.
 
 ## Build
 Requires the .NET 10 SDK and Windows Desktop targeting pack.
