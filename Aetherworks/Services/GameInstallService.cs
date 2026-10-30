@@ -131,12 +131,19 @@ public sealed class GameInstallService
     private void EnsureLegacyMigration(GameManifest game)
     {
         var current = Path.Combine(CommonPath, game.InstallFolder);
-        var legacy = Path.Combine(RootPath, game.InstallFolder);
-        if (!Directory.Exists(current) && Directory.Exists(legacy))
+        var legacyCandidates = new List<string> { Path.Combine(RootPath, game.InstallFolder) };
+        if (game.Id.Equals("wobble-works", StringComparison.OrdinalIgnoreCase))
+            legacyCandidates.Add(Path.Combine(RootPath, "WobbleWorks-Source"));
+
+        if (!Directory.Exists(current))
         {
-            Directory.CreateDirectory(CommonPath);
-            Directory.Move(legacy, current);
-            WriteManifest(game);
+            var legacy = legacyCandidates.FirstOrDefault(Directory.Exists);
+            if (legacy is not null)
+            {
+                Directory.CreateDirectory(CommonPath);
+                Directory.Move(legacy, current);
+                WriteManifest(game);
+            }
         }
     }
 
