@@ -27,11 +27,12 @@ public sealed class CatalogService
                 throw new InvalidDataException("Catalogue contains a missing or duplicate game id.");
             if (game.Depot <= 0 || !depots.Add(game.Depot))
                 throw new InvalidDataException($"Game '{game.Id}' has a missing or duplicate depot number.");
-            if (string.IsNullOrWhiteSpace(game.Name) || string.IsNullOrWhiteSpace(game.Executable) ||
-                string.IsNullOrWhiteSpace(game.InstallFolder) || !Uri.TryCreate(game.DownloadUrl, UriKind.Absolute, out var download) ||
+            if (string.IsNullOrWhiteSpace(game.Name) || string.IsNullOrWhiteSpace(game.InstallFolder) ||
+                (!game.SourceOnly && string.IsNullOrWhiteSpace(game.Executable)) ||
+                !Uri.TryCreate(game.DownloadUrl, UriKind.Absolute, out var download) ||
                 download.Scheme != Uri.UriSchemeHttps)
                 throw new InvalidDataException($"Game '{game.Id}' has incomplete or unsafe manifest data.");
-            if (Path.GetFileName(game.Executable) != game.Executable ||
+            if ((!game.SourceOnly && Path.GetFileName(game.Executable) != game.Executable) ||
                 game.InstallFolder.IndexOfAny(Path.GetInvalidFileNameChars()) >= 0 ||
                 game.InstallFolder.Contains("..", StringComparison.Ordinal))
                 throw new InvalidDataException($"Game '{game.Id}' contains an unsafe installation path.");
