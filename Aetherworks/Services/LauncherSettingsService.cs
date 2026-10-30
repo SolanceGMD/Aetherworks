@@ -6,7 +6,6 @@ namespace Aetherworks.Services;
 public sealed class LauncherSettings
 {
     public string CatalogueSource { get; set; } = "";
-    public string GoogleClientId { get; set; } = "";
 }
 
 public sealed class LauncherSettingsService
