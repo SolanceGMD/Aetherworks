@@ -1,12 +1,13 @@
 [
   {
-    "id": "aetherworks-build-test",
-    "name": "Aetherworks Build Test",
-    "description": "Temporary test depot: installs the launcher executable from the supplied GitHub Actions build artifact.",
-    "version": "0.1.0",
-    "depot": 1,
-    "downloadUrl": "https://github.com/SolanceGMD/Aetherworks/actions/runs/40968032254/artifacts/12937699833",
-    "executable": "publish/Aetherworks.exe",
-    "installFolder": "AetherworksBuildTest"
+    "id": "wobble-works",
+    "name": "Wobble Works",
+    "description": "Wobble Works is currently in development. The playable game is not available yet, but you can download the source code and explore the project. Use the Console command: sudo fetch depot 2 = [install]",
+    "version": "In Development",
+    "depot": 2,
+    "downloadUrl": "https://github.com/SolanceGMD/Aetherworks-Depots/releases/download/depot2/Wobble.Works.zip",
+    "executable": "",
+    "installFolder": "WobbleWorks-Source",
+    "sourceOnly": true
   }
 ]
